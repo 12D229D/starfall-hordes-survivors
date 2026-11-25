@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Starfall Hordes: Survivors — Bullet Heaven Cooperativo</title>
+  <meta name="description" content="Videojuego survivors-like / bullet heaven cooperativo: magos estelares combaten oleadas cósmicas y fusionan hechizos en superconjuros de constelación a 60 FPS.">
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+
+  <!-- Canvas de Renderizado de Alta Frecuencia -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- Banner Flotante de Constelación Activa -->
+  <div id="constellation-alert">✦ RESONANCIA DE CONSTELACIÓN ACTIVA ✦</div>
+
+  <!-- HUD Superior de Supervivencia -->
+  <header id="game-hud" style="display: none;">
+    <div class="hud-top-bar">
+      <!-- Cronómetro de Oleadas (0:00 a 20:00) -->
+      <div class="hud-timer-card">
+        <span class="hud-timer-label">Oleada</span>
+        <span class="hud-timer-value" id="hud-timer">00:00</span>
+      </div>
+
+      <!-- Estadísticas de la Partida -->
+      <div class="hud-stats-group">
+        <div class="hud-stat-badge stardust">
+          <span>✨</span>
+          <span id="hud-stardust">0</span>
+        </div>
+        <div class="hud-stat-badge kills">
+          <span>💀</span>
+          <span id="hud-kills">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de Experiencia Global -->
+    <div class="hud-xp-container">
+      <div class="hud-xp-header">
+        <span id="hud-level" class="hud-level-pill">NIVEL 1</span>
+        <span>EXPERIENCIA CÓSMICA</span>
+      </div>
+      <div class="hud-xp-track">
+        <div class="hud-xp-fill" id="hud-xp-fill"></div>
+      </div>
+    </div>
+
+    <!-- Paneles de Estado de Jugadores -->
+    <div class="hud-players-panel">
+      <!-- Jugador 1 -->
+      <div class="hud-player-card p1" id="hud-p1-card">
+        <div class="hud-player-name">
+          <span>Mago P1</span>
+          <span id="hud-p1-hp-text">SALUD</span>
+        </div>
+        <div class="hud-player-hp-track">
+          <div class="hud-player-hp-fill" id="hud-p1-hp-fill"></div>
+        </div>
+      </div>
+
+      <!-- Jugador 2 (Cooperativo) -->
+      <div class="hud-player-card p2" id="hud-p2-card" style="display: none;">
+        <div class="hud-player-name">
+          <span>Mago P2</span>
+          <span id="hud-p2-hp-text">SALUD</span>
+        </div>
+        <div class="hud-player-hp-track">
+          <div class="hud-player-hp-fill" id="hud-p2-hp-fill"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Pantalla Principal / Menú de Inicio -->
+  <main id="menu-screen" class="overlay-screen">
+    <div class="modal-content">
+      <h1 class="game-title">Starfall Hordes</h1>
+      <p class="game-subtitle">Bullet heaven cósmico cooperativo. Sobrevive a miles de invasores del vacío y alinea tus magos estelares para desatar constelaciones arcanas.</p>
+
+      <section style="width: 100%; margin-bottom: 20px;">
+        <h2 style="font-size: 1.1rem; margin-bottom: 12px; color: var(--accent-stellar);">Selecciona tu Magia Inicial (Jugador 1 — WASD)</h2>
+        <div class="character-select-grid">
+          <div class="character-card char-card-p1 selected" data-char-id="void_mage">
+            <div class="character-avatar" style="background: hsla(270, 70%, 55%, 0.2); color: #c77dff;">🌌</div>
+            <div class="character-name">Mago del Vacío</div>
+            <p class="character-desc">Hechizo: <strong>Orbe del Vacío</strong>.<br>Atracción gravitacional y daño continuo.</p>
+          </div>
+          <div class="character-card char-card-p1" data-char-id="stellar_sorceress">
+            <div class="character-avatar" style="background: hsla(190, 85%, 52%, 0.2); color: #00f5d4;">⭐</div>
+            <div class="character-name">Hechicera Estelar</div>
+            <p class="character-desc">Hechizo: <strong>Rayo de Púlsar</strong>.<br>Haces lumínicos veloces y alta cadencia.</p>
+          </div>
+          <div class="character-card char-card-p1" data-char-id="solar_druid">
+            <div class="character-avatar" style="background: hsla(45, 95%, 58%, 0.2); color: #ffd166;">☀️</div>
+            <div class="character-name">Druida Solar</div>
+            <p class="character-desc">Hechizo: <strong>Nova Solar</strong>.<br>Calor masivo concéntrico y alta resistencia.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Selección Jugador 2 (Oculto si es solitario) -->
+      <section id="p2-select-container" style="width: 100%; margin-bottom: 20px; display: none;">
+        <h2 style="font-size: 1.1rem; margin-bottom: 12px; color: var(--accent-solar);">Selecciona Jugador 2 (Cooperativo — Teclas IJKL)</h2>
+        <div class="character-select-grid">
+          <div class="character-card char-card-p2" data-char-id="void_mage">
+            <div class="character-avatar" style="background: hsla(270, 70%, 55%, 0.2); color: #c77dff;">🌌</div>
+            <div class="character-name">Mago del Vacío</div>
+          </div>
+          <div class="character-card char-card-p2 selected" data-char-id="stellar_sorceress">
+            <div class="character-avatar" style="background: hsla(190, 85%, 52%, 0.2); color: #00f5d4;">⭐</div>
+            <div class="character-name">Hechicera Estelar</div>
+          </div>
+          <div class="character-card char-card-p2" data-char-id="solar_druid">
+            <div class="character-avatar" style="background: hsla(45, 95%, 58%, 0.2); color: #ffd166;">☀️</div>
+            <div class="character-name">Druida Solar</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="menu-buttons">
+        <button id="coop-toggle-btn" class="btn-secondary" type="button">Modo: 1 Jugador (En solitario)</button>
+        <button id="btn-observatory" class="btn-secondary" type="button">🔭 Observatorio Cósmico</button>
+        <button id="btn-play" class="btn-primary" type="button">Comenzar Descenso</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Roguelite de Subida de Nivel (Level Up) -->
+  <aside id="levelup-screen" class="overlay-screen hidden" aria-modal="true" role="dialog">
+    <div class="modal-content">
+      <h2 style="font-family: var(--font-title); font-size: 2rem; color: var(--accent-solar); margin-bottom: 4px;">✦ RESONANCIA ARCANAS ✦</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 20px;">Has absorbido suficiente polvo estelar. Selecciona una bendición para fortalecer tus hechizos:</p>
+      <div id="levelup-cards-container" class="cards-container">
+        <!-- Generado dinámicamente con 3 opciones aleatorias -->
+      </div>
+    </div>
+  </aside>
+
+  <!-- Modal del Observatorio Cósmico (Metaprogresión) -->
+  <aside id="observatory-screen" class="overlay-screen hidden" aria-modal="true" role="dialog">
+    <div class="modal-content" style="max-width: 900px;">
+      <h2 style="font-family: var(--font-title); font-size: 2.2rem; color: var(--accent-solar); margin-bottom: 6px;">🔭 Observatorio Cósmico</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 18px;">
+        Canjea Fragmentos de Polvo Estelar acumulados en tus partidas para desbloquear mejoras arcanas permanentes.
+      </p>
+
+      <div style="margin-bottom: 16px; font-weight: 700; font-size: 1.1rem; color: var(--accent-stardust);">
+        Polvo Estelar Disponible: <span id="obs-stardust-count">0</span> ✨
+      </div>
+
+      <div id="observatory-grid" class="observatory-grid">
+        <!-- Renderizado dinámico de cartas de mejora permanente -->
+      </div>
+
+      <button id="btn-close-observatory" class="btn-secondary" type="button" style="margin-top: 10px;">Regresar al Menú</button>
+    </div>
+  </aside>
+
+  <!-- Pantalla de Fin de Partida (Game Over / Victoria) -->
+  <aside id="gameover-screen" class="overlay-screen hidden" aria-modal="true" role="dialog">
+    <div class="modal-content" style="max-width: 580px;">
+      <h2 id="gameover-title" style="font-family: var(--font-title); font-size: 1.9rem; color: var(--danger-red); margin-bottom: 14px;">El Vacío te ha Consumido</h2>
+      
+      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; margin: 16px 0; font-size: 1.05rem;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--surface-border); padding-bottom: 6px;">
+          <span>Tiempo Sobrevivido:</span>
+          <strong id="go-time" style="color: var(--accent-solar);">00:00</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--surface-border); padding-bottom: 6px;">
+          <span>Invasores Derrotados:</span>
+          <strong id="go-kills" style="color: var(--danger-red);">0</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--surface-border); padding-bottom: 6px;">
+          <span>Nivel Alcanzado:</span>
+          <strong id="go-level" style="color: var(--accent-stellar);">1</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--surface-border); padding-bottom: 6px;">
+          <span>Polvo Estelar Ganado:</span>
+          <strong id="go-stardust" style="color: var(--accent-stardust);">+0 ✨</strong>
+        </div>
+      </div>
+
+      <div class="menu-buttons" style="margin-top: 10px;">
+        <button id="btn-menu" class="btn-secondary" type="button">Menú Principal</button>
+        <button id="btn-restart" class="btn-primary" type="button">Intentar de Nuevo</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Entrada del Motor del Juego -->
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

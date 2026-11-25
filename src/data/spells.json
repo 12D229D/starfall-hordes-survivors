@@ -1,0 +1,128 @@
+[
+  {
+    "id": "void_orb",
+    "name": "Orbe del Vacío",
+    "description": "Lanza esferas de energía oscura que orbitan o atraviesan enemigos causando daño continuo.",
+    "type": "projectile",
+    "damage": 24,
+    "cooldown": 1.1,
+    "speed": 340,
+    "count": 1,
+    "pierce": 2,
+    "area": 18,
+    "color": "#9d4edd",
+    "glowColor": "rgba(157, 78, 221, 0.8)",
+    "evolution": {
+      "requires": ["void_orb", "chrono_dial"],
+      "name": "Supernova del Vacío",
+      "damage": 85,
+      "area": 45,
+      "special": "Genera agujeros negros que absorben y desintegran enjambres."
+    }
+  },
+  {
+    "id": "pulsar_beam",
+    "name": "Rayo de Púlsar",
+    "description": "Dispara ráfagas de luz pulsante de alta velocidad en la dirección más densa de enemigos.",
+    "type": "beam",
+    "damage": 38,
+    "cooldown": 1.4,
+    "speed": 620,
+    "count": 2,
+    "pierce": 4,
+    "area": 12,
+    "color": "#48cae4",
+    "glowColor": "rgba(72, 202, 228, 0.8)",
+    "evolution": {
+      "requires": ["pulsar_beam", "astral_core"],
+      "name": "Cuásar Implacable",
+      "damage": 120,
+      "count": 4,
+      "special": "Los haces rebotan entre enemigos y refractan rayos secundarios."
+    }
+  },
+  {
+    "id": "solar_nova",
+    "name": "Nova Solar",
+    "description": "Erupción periódica de calor estelar concéntrico que incinera a los enemigos cercanos.",
+    "type": "aura",
+    "damage": 45,
+    "cooldown": 2.2,
+    "speed": 0,
+    "count": 1,
+    "pierce": 999,
+    "area": 110,
+    "color": "#ffd166",
+    "glowColor": "rgba(255, 209, 102, 0.85)",
+    "evolution": {
+      "requires": ["solar_nova", "solar_prism"],
+      "name": "Ignición Heliópolis",
+      "damage": 140,
+      "area": 200,
+      "special": "Deja un anillo de fuego estelar perpetuo que reduce armadura enemiga."
+    }
+  },
+  {
+    "id": "starlight_lance",
+    "name": "Lanza Estelar",
+    "description": "Lanza de fotones que cae en línea recta perforando columnas de invasores estelares.",
+    "type": "lance",
+    "damage": 55,
+    "cooldown": 1.8,
+    "speed": 500,
+    "count": 1,
+    "pierce": 6,
+    "area": 16,
+    "color": "#f72585",
+    "glowColor": "rgba(247, 37, 133, 0.85)",
+    "evolution": {
+      "requires": ["starlight_lance", "singularity_lens"],
+      "name": "Juicio Cósmico",
+      "damage": 175,
+      "area": 28,
+      "special": "Causa micro-explosiones en cadena en cada impacto perforante."
+    }
+  },
+  {
+    "id": "meteor_shower",
+    "name": "Lluvia de Meteoritos",
+    "description": "Fragmentos incandescentes caen aleatoriamente desde el cosmos sobre los enjambres.",
+    "type": "barrage",
+    "damage": 60,
+    "cooldown": 2.6,
+    "speed": 400,
+    "count": 4,
+    "pierce": 1,
+    "area": 36,
+    "color": "#ff6b35",
+    "glowColor": "rgba(255, 107, 53, 0.85)",
+    "evolution": {
+      "requires": ["meteor_shower", "gravity_anchor"],
+      "name": "Lluvia de Asteroides Olvidados",
+      "damage": 190,
+      "count": 8,
+      "special": "Aturde a los enemigos y deja cráteres de magma espacial ardiente."
+    }
+  },
+  {
+    "id": "cosmic_shield",
+    "name": "Aura de Singularidad",
+    "description": "Barrera gravitatoria que repite ondas de choque al contacto y reduce daño entrante.",
+    "type": "passive_active",
+    "damage": 30,
+    "cooldown": 2.8,
+    "speed": 0,
+    "count": 1,
+    "pierce": 999,
+    "area": 80,
+    "color": "#70e000",
+    "glowColor": "rgba(112, 224, 0, 0.8)",
+    "evolution": {
+      "requires": ["cosmic_shield", "ether_vessel"],
+      "name": "Baluarte del Firmamento",
+      "damage": 95,
+      "area": 130,
+      "special": "Convierte el 15% del daño bloqueado en orbes de salud para ambos jugadores."
+    }
+  }
+]
